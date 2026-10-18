@@ -1,0 +1,65 @@
+PACMAN — Instructions
+======================
+
+LANCEMENT
+---------
+Construire le jeu :
+  ./build.sh
+
+Lancer le jeu construit :
+  ./dist/Pacman/run.sh
+
+L'archive distribuable est créée ici :
+  ./dist/Pacman-linux.tar.gz
+
+Le dossier `dist/Pacman` peut être copié sur une autre machine Linux.
+`config.json` et `highscore.json` restent modifiables à côté du jeu.
+
+Pour lancer le jeu depuis les sources :
+  make run
+
+CONTROLES
+---------
+Flèches directionnelles : déplacer Pacman
+P ou Échap              : mettre en pause ou reprendre
+C 						: pour activer le cheat mode
+  N				 		: passer au niveau suivant
+Dans le menu pause :
+  Flèches haut/bas      : sélectionner une option
+  Entrée                : valider
+  P ou Échap            : reprendre la partie
+
+REGLES DU JEU
+-------------
+- Vous commencez avec 3 vies
+- Pac-gum (petite pastille)       : 10 points
+- Super pac-gum (grosse pastille) : 50 points
+- Manger un fantôme (après super pac-gum) : 200 points
+- Chaque niveau doit être terminé en 90 secondes maximum
+- 100 pac-gums à collecter par niveau
+- Le jeu comporte 10 niveaux, avec des labyrinthes générés
+  automatiquement (tailles 14x14 puis 15x15)
+
+CONFIGURATION
+-------------
+Les paramètres du jeu se trouvent dans config.json :
+- "lives"                  : nombre de vies de départ (3 par défaut)
+- "points_per_pacgum"      : points par pac-gum (10)
+- "points_per_super_pacgum": points par super pac-gum (50)
+- "points_per_ghost"       : points par fantôme mangé (200)
+- "level_max_time"         : temps max par niveau en secondes (90)
+- "pacgum"                 : nombre de pac-gums par niveau (100)
+- "seed"                   : graine de génération des labyrinthes (42)
+- "level"                  : dimensions du labyrinthe pour chacun
+                des 10 niveaux
+
+Le fichier doit être fourni au lancement avec la commande :
+  make run
+
+Modifier ces valeurs avant de lancer le jeu change la difficulté
+et le comportement de la partie.
+
+SCORE
+-----
+Le meilleur score est automatiquement sauvegardé dans highscore.json
+et rechargé au lancement suivant.

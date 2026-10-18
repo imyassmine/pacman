@@ -1,0 +1,15 @@
+# Documentation
+*.pdf
+
+# Python
+__pycache__/
+*.pyc
+.mypy_cache/
+.pytest_cache/
+venv/
+.venv/
+
+# Build
+build/
+dist/
+*.zip
