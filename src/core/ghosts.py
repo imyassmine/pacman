@@ -1,6 +1,8 @@
+from src.core.entities import Entity
 from src.core.player import Player
 from src.maze.adapter import MazeAdapter
-from src.core.entities import Entity
+
+MOVES = {"E": (1, 0), "W": (-1, 0), "S": (0, 1), "N": (0, -1)}
 
 
 class Ghost(Entity):
@@ -15,6 +17,7 @@ class Ghost(Entity):
         maze_adapter: Adapter for maze navigation and collision detection.
         is_edible: Whether the ghost can currently be eaten by the player.
     """
+
     def __init__(
         self,
         position: tuple[int, int],
@@ -66,72 +69,26 @@ class Ghost(Entity):
 
     def chase_player(self, player: Player) -> None:
         """Move the ghost towards the player."""
-        distances = {}
-        if self.maze_adapter.can_move(self.x, self.y, "E"):
-            distances["E"] = (
-                abs(self.x + 1 - player.x)
-                + abs(self.y - player.y)
-            )
-        if self.maze_adapter.can_move(self.x, self.y, "W"):
-            distances["W"] = (
-                abs(self.x - 1 - player.x)
-                + abs(self.y - player.y)
-            )
-        if self.maze_adapter.can_move(self.x, self.y, "S"):
-            distances["S"] = (
-                abs(self.x - player.x)
-                + abs(self.y + 1 - player.y)
-            )
-        if self.maze_adapter.can_move(self.x, self.y, "N"):
-            distances["N"] = (
-                abs(self.x - player.x)
-                + abs(self.y - 1 - player.y)
-            )
-        if not distances:
-            return
-        direction = min(distances.items(), key=lambda item: item[1])[0]
-        if direction == "W":
-            self.x -= 1
-        elif direction == "E":
-            self.x += 1
-        elif direction == "S":
-            self.y += 1
-        elif direction == "N":
-            self.y -= 1
-        self.position = (self.x, self.y)
+        self._move_closest(player, flee=False)
 
     def move_away(self, player: Player) -> None:
         """Move the ghost away from the player."""
-        distances = {}
-        if self.maze_adapter.can_move(self.x, self.y, "E"):
-            distances["E"] = (
-                abs(self.x + 1 - player.x)
-                + abs(self.y - player.y)
-            )
-        if self.maze_adapter.can_move(self.x, self.y, "W"):
-            distances["W"] = (
-                abs(self.x - 1 - player.x)
-                + abs(self.y - player.y)
-            )
-        if self.maze_adapter.can_move(self.x, self.y, "S"):
-            distances["S"] = (
-                abs(self.x - player.x)
-                + abs(self.y + 1 - player.y)
-            )
-        if self.maze_adapter.can_move(self.x, self.y, "N"):
-            distances["N"] = (
-                abs(self.x - player.x)
-                + abs(self.y - 1 - player.y)
-            )
+        self._move_closest(player, flee=True)
+
+    def _move_closest(self, player: Player, flee: bool) -> None:
+        """Move towards the player, or away from them when fleeing."""
+        distances: dict[str, int] = {}
+        for direction, (dx, dy) in MOVES.items():
+            if self.maze_adapter.can_move(self.x, self.y, direction):
+                distances[direction] = (
+                    abs(self.x + dx - player.x)
+                    + abs(self.y + dy - player.y)
+                )
         if not distances:
             return
-        direction = max(distances.items(), key=lambda item: item[1])[0]
-        if direction == "W":
-            self.x -= 1
-        elif direction == "E":
-            self.x += 1
-        elif direction == "S":
-            self.y += 1
-        elif direction == "N":
-            self.y -= 1
+        pick = max if flee else min
+        direction = pick(distances.items(), key=lambda item: item[1])[0]
+        dx, dy = MOVES[direction]
+        self.x += dx
+        self.y += dy
         self.position = (self.x, self.y)

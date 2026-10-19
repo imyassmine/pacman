@@ -1,8 +1,9 @@
 import pygame
-from src.persistence.highscore import HighscoreManager as hg
+
+from src.persistence.highscore import HighscoreManager
 
 
-class Game():
+class Game:
     """Manages the game over and victory screens with name input.
 
     Handles the display of game over or victory screens, manages
@@ -22,7 +23,7 @@ class Game():
         self.state = "playing"
         self.input_name = ""
         self.score = 0
-        self.hg_manager = hg()
+        self.hg_manager = HighscoreManager()
 
     def game_over(self, score: int) -> None:
         """Transition to game over screen with name input."""
@@ -39,10 +40,10 @@ class Game():
         self.is_victory = True
 
     def _save_score(self, file: str) -> None:
-        """Save the score to highscores.json."""
-        highscores = self.hg_manager.load_highscores(file)
-        highscores[self.input_name] = self.score
-        self.hg_manager.save_highscores(file, highscores)
+        """Save the score to the highscores file."""
+        self.hg_manager.save_highscores(
+            file, {self.input_name: self.score}
+        )
 
     def handle_event(self, file: str, event: pygame.event.Event) -> bool:
         """

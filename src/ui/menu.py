@@ -1,16 +1,17 @@
+from enum import Enum, auto
+from json import JSONDecodeError, loads
+
 import pygame
-from enum import Enum
-from json import loads, JSONDecodeError
 
 
 class Action(Enum):
-    START_GAME = 0
-    VIEW_HIGHSCORES = 1
-    INSTRUCTIONS = 2
-    EXIT = 3
+    START_GAME = auto()
+    VIEW_HIGHSCORES = auto()
+    INSTRUCTIONS = auto()
+    EXIT = auto()
 
 
-class MainMenu():
+class MainMenu:
     """Main menu screen for navigating the game.
 
     Provides a menu interface for starting a new game, viewing highscores,
@@ -22,6 +23,7 @@ class MainMenu():
         index: Currently selected menu item index.
         current_view: The current screen view.
     """
+
     def __init__(self, screen: pygame.Surface) -> None:
         self.screen = screen
         self.actions = list(Action)
@@ -50,11 +52,11 @@ class MainMenu():
         start_y = (self.screen.get_height() / 2) - (total_height / 2)
 
         for i, line in enumerate(lines):
-            text = font.render(line.strip(), True, (255, 255, 255))
-            rect = text.get_rect(
+            text = font.render(line, True, (255, 255, 255))
+            text_rect = text.get_rect(
                 center=(self.screen.get_width() / 2, start_y + i * spacing)
             )
-            self.screen.blit(text, rect)
+            self.screen.blit(text, text_rect)
 
         info_font = pygame.font.SysFont("Arial", 24)
         info_text = info_font.render(
@@ -70,8 +72,7 @@ class MainMenu():
         """Display the highscores screen overlay."""
         try:
             with open(file, "r") as fd:
-                data = fd.readline()
-            scores = loads(data)
+                scores = loads(fd.read())
         except (FileNotFoundError, JSONDecodeError):
             scores = None
 
@@ -103,7 +104,6 @@ class MainMenu():
                     self.screen.get_height() - 30)
         )
         self.screen.blit(info_text, info_rect)
-        return None
 
     def handle_event(self, event: pygame.event.Event) -> Action | None:
         """Handle keyboard input for menu navigation and selection."""
@@ -114,15 +114,9 @@ class MainMenu():
                 return None
 
             if event.key == pygame.K_UP:
-                if self.index == 0:
-                    pass
-                else:
-                    self.index -= 1
+                self.index = max(0, self.index - 1)
             elif event.key == pygame.K_DOWN:
-                if self.index == 3:
-                    pass
-                else:
-                    self.index += 1
+                self.index = min(len(self.actions) - 1, self.index + 1)
             elif event.key == pygame.K_RETURN:
                 return self.actions[self.index]
         return None

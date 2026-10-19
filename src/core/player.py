@@ -1,4 +1,5 @@
 from typing import Any
+
 from src.core.entities import Entity, SuperPacgum
 from src.maze.adapter import MazeAdapter
 
@@ -12,8 +13,6 @@ class Player:
     Attributes:
         x: Current x-coordinate of the player.
         y: Current y-coordinate of the player.
-        start_x: Starting x-coordinate for respawn.
-        start_y: Starting y-coordinate for respawn.
         points: Current points/score of the player.
         lives: Number of lives remaining.
         maze_adapter: Adapter for maze navigation and collision detection.
@@ -27,7 +26,6 @@ class Player:
         maze_adapter: MazeAdapter,
     ) -> None:
         self.x, self.y = position
-        self.start_x, self.start_y = position
         self.points = points
         self.lives = lives
         self.maze_adapter = maze_adapter
@@ -35,22 +33,13 @@ class Player:
         self.move_timer: float = 0.0
         self.move_interval: float = 0.1
 
-    def get_position(self) -> tuple[int, int]:
-        """Get the current position of the player."""
-        return self.x, self.y
-
-    def get_lives(self) -> int:
-        """Get the number of lives remaining."""
-        return self.lives
-
     def get_points(self) -> int:
         """Get the current points/score."""
         return self.points
 
     def respawn(self, position: tuple[int, int]) -> None:
-        """Reset the player's position after the maze has been regenerated."""
+        """Move the player back to the given position."""
         self.x, self.y = position
-        self.start_x, self.start_y = position
 
     def check_collisions(self, entities: list[Entity],
                          ghosts: list[Any]) -> int:

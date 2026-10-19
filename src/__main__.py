@@ -39,16 +39,12 @@ def main() -> None:
         sys.exit(1)
 
     config = get_config(str(config_path))
-    max = {"width": 0, "height": 0}
-    for level in config.level:
-        if level.width > max["width"]:
-            max["width"] = level.width
-        if level.height > max["height"]:
-            max["height"] = level.height
+    max_width = max(level.width for level in config.level)
+    max_height = max(level.height for level in config.level)
     screen = pygame.display.set_mode(
         (
-            max["width"] * CELL_SIZE + 2,
-            max["height"] * CELL_SIZE + HUD_HEIGHT + 2,
+            max_width * CELL_SIZE + 2,
+            max_height * CELL_SIZE + HUD_HEIGHT + 2,
         )
     )
     main_menu = MainMenu(screen)
@@ -147,7 +143,6 @@ def main() -> None:
         clock.tick(60)
 
     pygame.quit()
-    sys.exit()
 
 
 if __name__ == "__main__":

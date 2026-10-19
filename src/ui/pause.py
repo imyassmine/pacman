@@ -1,7 +1,7 @@
 import pygame
 
 
-class PauseMenu():
+class PauseMenu:
     def __init__(self, screen: pygame.Surface) -> None:
         self.screen = screen
         self.index = 0
@@ -20,7 +20,7 @@ class PauseMenu():
             return "menu"
         return None
 
-    def draw_pause_menu(self) -> tuple[pygame.Rect, pygame.Rect]:
+    def draw_pause_menu(self) -> None:
         """Draw the pause menu."""
         rect = pygame.Rect(0, 0, self.screen.get_width(),
                            self.screen.get_height())
@@ -43,4 +43,3 @@ class PauseMenu():
             center=(self.screen.get_width() / 2,
                     self.screen.get_height() / 2 + 50))
         self.screen.blit(main_menu_text, main_menu_rect)
-        return resume_rect, main_menu_rect

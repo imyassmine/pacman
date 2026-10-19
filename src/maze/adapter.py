@@ -17,19 +17,11 @@ class MazeAdapter:
         self._seed = seed
         self._maze_generator = MazeGenerator((width, height),
                                              perfect, seed=seed)
-        self._maze = self._maze_generator.maze
+        self._maze: list[list[int]] = self._maze_generator.maze
 
     def get_maze(self) -> list[list[int]]:
         """Return the maze."""
         return self._maze
-
-    def get_entry(self) -> tuple[int, int]:
-        """Return the entry coordinates (x, y)."""
-        return self._maze_generator.maze_entry
-
-    def get_exit(self) -> tuple[int, int]:
-        """Return the exit coordinates (x, y)."""
-        return self._maze_generator.maze_exit
 
     def get_corners(self) -> list[tuple[int, int]]:
         """Return the four maze corners as (x, y) coordinate pairs."""
@@ -41,7 +33,7 @@ class MazeAdapter:
         ]
 
     def get_ghost_pos(self) -> list[tuple[int, int]]:
-        """Return the four ghost position as (x, y) coordinate pairs."""
+        """Return the four ghost starting positions as (x, y) pairs."""
         return [
             (1, 0),
             (self._width - 1, 1),
@@ -52,10 +44,6 @@ class MazeAdapter:
     def get_center(self) -> tuple[int, int]:
         """Return the maze center coordinates (x, y)."""
         return (self._width // 2, self._height // 2)
-
-    def get_shortest_path(self) -> str | bool:
-        """Return the shortest path or False if impossible."""
-        return self._maze_generator.shortest_path
 
     def get_width(self) -> int:
         """Return the maze width."""
@@ -68,7 +56,7 @@ class MazeAdapter:
     def get_cell(self, x: int, y: int) -> int:
         """Return the value of a cell."""
         if 0 <= x < self._width and 0 <= y < self._height:
-            return self._maze[y][x]
+            return int(self._maze[y][x])
         return -1  # Invalid coordinates
 
     def regenerate(
@@ -101,7 +89,7 @@ class MazeAdapter:
         if direction not in wall_bits:
             return True
 
-        return (cell_value & wall_bits[direction]) != 0
+        return bool(cell_value & wall_bits[direction])
 
     def can_move(self, x: int, y: int, direction: str) -> bool:
         """Check if we can move in a direction (N, E, S, W)."""
